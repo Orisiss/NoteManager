@@ -16,12 +16,12 @@ class MyProfilPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CircleAvatar(
-              backgroundImage: AssetImage('assets/profile_picture.jpg'),
+              backgroundImage: AssetImage('lib/assets/avatar.png'),
               radius: 80,
             ),
             SizedBox(height: 24),
             Text(
-              'John Doe',
+              'Louis Pichon',
               style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),

@@ -1,34 +1,28 @@
 class MatiereColumn {
   static final List<String> values = [
     'id',
-    'nom',
-    'id_professeur'
+    'nom'
   ];
 
   static const String id = 'id';
   static const String nom = 'nom';
-  static const String id_professeur = 'id_professeur';
 
   final int idMatiere;
-  final int nomMatiere;
-  final int idProfesseurMatiere;
+  final String nomMatiere;
 
   MatiereColumn({
     required this.idMatiere,
-    required this.nomMatiere,
-    required this.idProfesseurMatiere,
+    required this.nomMatiere
   });
 
   MatiereColumn.fromMap(Map<String, dynamic> map)
       : idMatiere = map[id],
-        nomMatiere = map[nom],
-        idProfesseurMatiere = map[id_professeur];
+        nomMatiere = map[nom];
 
   Map<String, Object> toMap() {
     return {
       id: idMatiere,
-      nom: nomMatiere,
-      id_professeur: idProfesseurMatiere,
+      nom: nomMatiere
     };
   }
 }

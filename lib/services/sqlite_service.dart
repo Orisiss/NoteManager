@@ -3,6 +3,7 @@ import 'package:note_manager/models/evaluation.dart';
 import 'package:note_manager/models/matiere.dart';
 import 'package:note_manager/models/professeur.dart';
 import 'package:note_manager/models/recompense.dart';
+import 'package:note_manager/models/recompense_evaluation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -10,157 +11,165 @@ class SqliteService {
   Future<Database> initializeDB() async {
     String path = await getDatabasesPath();
 
-    return openDatabase(join(path, 'database.db'),
+    return openDatabase(join(path, 'note_manager.db'),
         onCreate: (database, version) async {
       await database.execute('''
-          "CREATE TABLE Devoir (
-            id INTEGER PRIMARY KEY AUTOINCREMENT, 
-            titre TEXT NOT NULL, 
-            description TEXT, 
-            date_echeance TEXT NOT NULL, 
-            priorite INTEGER NOT NULL,
-            id_matiere INTEGER NOT NULL,
-            FOREIGN KEY (id_matiere) REFERENCES matiere (id) ON DELETE NO ACTION ON UPDATE NO ACTION)",
-        )''');
+        CREATE TABLE Devoir (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        titre VARCHAR(255) NOT NULL,
+        description TEXT,
+        date_echeance DATE NOT NULL,
+        priorite INTEGER NOT NULL,
+        fait INTEGER NOT NULL,
+        id_professeur INTEGER NOT NULL,
+        OREIGN KEY (id_professeur) REFERENCES Professeur(id)
+        );
+      ''');
 
       await database.execute('''
-          "CREATE TABLE Matiere (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nom TEXT NOT NULL,
-            id_professeur INTEGER NOT NULL,
-            FOREIGN KEY (id_professeur) REFERENCES professeur (id) ON DELETE NO ACTION ON UPDATE NO ACTION)",
-        )''');
+        CREATE TABLE Matière (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nom VARCHAR(255) NOT NULL
+        );
+      ''');
 
       await database.execute('''
-          "CREATE TABLE Evaluation (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
-            valeur INTEGER NOT NULL,
-            date INTEGER NOT NULL,
-            id_matiere INTEGER NOT NULL,
-            FOREIGN KEY (id_matiere) REFERENCES matiere (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
-            )",
-        )''');
+        CREATE TABLE Evaluation (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        valeur INTEGER NOT NULL,
+        date DATE NOT NULL,
+        id_matiere INTEGER NOT NULL,
+        FOREIGN KEY (id_matiere) REFERENCES Matière(id)
+        );
+      ''');
 
       await database.execute('''
-          "CREATE TABLE Professeur (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            prenom TEXT NOT NULL,
-            nom TEXT NOT NULL,
-            )",
-        )''');
+        CREATE TABLE Professeur (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nom VARCHAR(255) NOT NULL,
+        prenom VARCHAR(255) NOT NULL
+        );
+      ''');
 
       await database.execute('''
-          "CREATE TABLE Recompense (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_recompense INTEGER NOT NULL,
-            id_evaluation INTEGER NOT NULL,
-            FOREIGN KEY (id_recompense) REFERENCES recompense (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
-            FOREIGN KEY (id_evaluation) REFERENCES evaluation (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
-            )",
-        )''');
+        CREATE TABLE Recompense (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nom VARCHAR(255) NOT NULL
+        );
+      ''');
+
+      await database.execute('''
+        CREATE TABLE RecompenseEvaluation (
+        id_devoir INTEGER NOT NULL,
+        id_recompense INTEGER NOT NULL,
+        date_obtention DATE NOT NULL,
+        FOREIGN KEY (id_devoir) REFERENCES Devoir(id),
+        FOREIGN KEY (id_recompense) REFERENCES Recompense(id)
+        );
+      ''');
     }, version: 1);
   }
 
   Future<int> insertDevoir(Devoir devoir) async {
-    Database db = await this.initializeDB();
+    Database db = await initializeDB();
     return await db.insert('Devoir', devoir.toMap());
   }
 
   Future<List<Devoir>> getAllDevoirs() async {
-    Database db = await this.initializeDB();
+    Database db = await initializeDB();
     List<Map<String, dynamic>> maps = await db.query('Devoir');
     return List.generate(maps.length, (i) {
       return Devoir(
         idDevoir: maps[i][Devoir.id],
-        titreDevoir: maps[i][Devoir.titre], 
-        descriptionDevoir: maps[i][Devoir.description], 
-        dateEcheanceDevoir: maps[i][Devoir.dateEcheance], 
-        prioriteDevoir: maps[i][Devoir.priorite], 
+        titreDevoir: maps[i][Devoir.titre],
+        descriptionDevoir: maps[i][Devoir.description],
+        dateEcheanceDevoir: maps[i][Devoir.dateEcheance],
+        prioriteDevoir: maps[i][Devoir.priorite],
+        faitDevoir: maps[i][Devoir.fait],
         idMatiereDevoir: maps[i][Devoir.idMatiere],
-        );
+      );
     });
   }
 
   Future<int> updateDevoir(Devoir devoir) async {
-    Database db = await this.initializeDB();
+    Database db = await initializeDB();
     return await db.update('Devoir', devoir.toMap(),
-        where: 'id = ?', 
-        whereArgs: [devoir.idDevoir]);
+        where: 'id = ?', whereArgs: [devoir.idDevoir]);
   }
 
   Future<int> deleteDevoir(int id) async {
-    Database db = await this.initializeDB();
+    Database db = await initializeDB();
     return await db.delete('Devoir', where: 'id =?', whereArgs: [id]);
   }
 
   Future<int> insertMatiere(MatiereColumn matiere) async {
-    Database db = await this.initializeDB();
+    Database db = await initializeDB();
     return await db.insert('Matiere', matiere.toMap());
   }
 
   Future<List<MatiereColumn>> getAllMatieres() async {
-    Database db = await this.initializeDB();
+    Database db = await initializeDB();
     List<Map<String, dynamic>> maps = await db.query('Matiere');
     return List.generate(maps.length, (i) {
       return MatiereColumn(
         idMatiere: maps[i][MatiereColumn.id],
-        nomMatiere: maps[i][MatiereColumn.nom], 
-        idProfesseurMatiere: maps[i][MatiereColumn.id_professeur],
-        );
+        nomMatiere: maps[i][MatiereColumn.nom],
+      );
     });
   }
 
   Future<int> updateMatiere(MatiereColumn matiere) async {
-    Database db = await this.initializeDB();
+    Database db = await initializeDB();
     return await db.update('Matiere', matiere.toMap(),
-    where: 'id = ?',
-    whereArgs: [matiere.idMatiere]);
+        where: 'id = ?', whereArgs: [matiere.idMatiere]);
   }
 
   Future<int> deleteMatiere(int id) async {
-    Database db = await this.initializeDB();
+    Database db = await initializeDB();
     return await db.delete('Matiere', where: 'id =?', whereArgs: [id]);
   }
 
   Future<int> insertProfesseur(ProfesseurColumn professeur) async {
-    Database db = await this.initializeDB();
-    return await db.insert('Professeur', professeur.toMap());
+    Database db = await initializeDB();
+    return await db.insert('Professeur', professeur.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<List<ProfesseurColumn>> getAllProfesseurs() async {
-    Database db = await this.initializeDB();
-    List<Map<String, dynamic>> maps = await db.query('Professeur');
-    return List.generate(maps.length, (i) {
-      return ProfesseurColumn(
-        idProfesseur: maps[i][ProfesseurColumn.id],
-        prenomProfesseur: maps[i][ProfesseurColumn.prenom],
-        nomProfesseur: maps[i][ProfesseurColumn.nom],
-        );
-    });
+    final db = await initializeDB();
+    final List<Map<String, Object?>> professeurMaps =
+        await db.query('Professeur');
+    return [
+      for (final {
+            'id': id as int,
+            'prenom': prenomProfesseur as String,
+            'nom': nomProfesseur as String,
+          } in professeurMaps)
+        ProfesseurColumn(
+            idProfesseur: id,
+            prenomProfesseur: prenomProfesseur,
+            nomProfesseur: nomProfesseur),
+    ];
   }
 
   Future<int> updateProfesseur(ProfesseurColumn professeur) async {
-    Database db = await this.initializeDB();
+    Database db = await initializeDB();
     return await db.update('Professeur', professeur.toMap(),
-    where: 'id = ?',
-    whereArgs: [professeur.idProfesseur]);
+        where: 'id = ?', whereArgs: [professeur.idProfesseur]);
   }
 
   Future<int> deleteProfesseur(int id) async {
-    Database db = await this.initializeDB();
-    return await db.delete('Professeur', 
-    where: 'id = ?', 
-    whereArgs: [id]);
+    Database db = await initializeDB();
+    return await db.delete('Professeur', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<int> insertEvaluation(Evaluation evaluation) async {
-    Database db = await this.initializeDB();
+    Database db = await initializeDB();
     return await db.insert('Evaluation', evaluation.toMap());
   }
 
   Future<List<Evaluation>> getAllEvaluations() async {
-    Database db = await this.initializeDB();
+    Database db = await initializeDB();
     List<Map<String, dynamic>> maps = await db.query('Evaluation');
     return List.generate(maps.length, (i) {
       return Evaluation(
@@ -169,51 +178,82 @@ class SqliteService {
         valeurEvaluation: maps[i][Evaluation.valeur],
         dateEvaluation: maps[i][Evaluation.date],
         idMatiereEvaluation: maps[i][Evaluation.id_matiere],
-        );
+      );
     });
   }
 
   Future<int> updateEvaluation(Evaluation evaluation) async {
-    Database db = await this.initializeDB();
+    Database db = await initializeDB();
     return await db.update('Evaluation', evaluation.toMap(),
-    where: 'id = ?',
-    whereArgs: [evaluation.idEvaluation]);
+        where: 'id = ?', whereArgs: [evaluation.idEvaluation]);
   }
 
   Future<int> deleteEvaluation(int id) async {
-    Database db = await this.initializeDB();
-    return await db.delete('Evaluation',
-    where: 'id = ?',
-    whereArgs: [id]);
+    Database db = await initializeDB();
+    return await db.delete('Evaluation', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<int> insertRecompense(RecompenseColumn recompense) async {
-    Database db = await this.initializeDB();
+    Database db = await initializeDB();
     return await db.insert('Recompense', recompense.toMap());
   }
 
   Future<List<RecompenseColumn>> getAllRecompenses() async {
-    Database db = await this.initializeDB();
+    Database db = await initializeDB();
     List<Map<String, dynamic>> maps = await db.query('Recompense');
     return List.generate(maps.length, (i) {
       return RecompenseColumn(
         idRecompense: maps[i][RecompenseColumn.id],
         nomRecompense: maps[i][RecompenseColumn.nom],
-        );
+      );
     });
   }
 
   Future<int> updateRecompense(RecompenseColumn recompense) async {
-    Database db = await this.initializeDB();
+    Database db = await initializeDB();
     return await db.update('Recompense', recompense.toMap(),
-    where: 'id = ?',
-    whereArgs: [recompense.idRecompense]);
+        where: 'id = ?', whereArgs: [recompense.idRecompense]);
   }
 
   Future<int> deleteRecompense(int id) async {
-    Database db = await this.initializeDB();
-    return await db.delete('Recompense',
-    where: 'id = ?',
-    whereArgs: [id]);
+    Database db = await initializeDB();
+    return await db.delete('Recompense', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<int> insertRecompenseEvaluation(
+      RecompenseEvaluationColumn recompenseEvaluation) async {
+    Database db = await initializeDB();
+    return await db.insert(
+        'RecompenseEvaluation', recompenseEvaluation.toMap());
+  }
+
+  Future<List<RecompenseEvaluationColumn>> getAllRecompenseEvaluation() async {
+    Database db = await initializeDB();
+    List<Map<String, dynamic>> maps = await db.query('RecompenseEvaluation');
+    return List.generate(maps.length, (i) {
+      return RecompenseEvaluationColumn(
+        idRecompenseEvaluation: maps[i][RecompenseEvaluationColumn.id],
+        idRecompenseRecompenseEvaluation: maps[i]
+            [RecompenseEvaluationColumn.idRecompense],
+        idEvaluationRecompenseEvaluation: maps[i]
+            [RecompenseEvaluationColumn.idEvaluation],
+        dateObtentionRecompenseEvaluation: maps[i]
+            [RecompenseEvaluationColumn.dateObtention],
+      );
+    });
+  }
+
+  Future<int> updateRecompenseEvaluation(
+      RecompenseEvaluationColumn recompenseEvaluation) async {
+    Database db = await initializeDB();
+    return await db.update('RecompenseEvaluation', recompenseEvaluation.toMap(),
+        where: 'id = ?',
+        whereArgs: [recompenseEvaluation.idRecompenseEvaluation]);
+  }
+
+  Future<int> deleteRecompenseEvaluation(int id) async {
+    Database db = await initializeDB();
+    return await db
+        .delete('RecompenseEvaluation', where: 'id = ?', whereArgs: [id]);
   }
 }

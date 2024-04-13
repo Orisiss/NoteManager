@@ -5,6 +5,7 @@ class Devoir {
     'description',
     'date_echeance',
     'priorite',
+    'fait',
     'id_matiere',
   ];
 
@@ -13,6 +14,7 @@ class Devoir {
   static const String description = 'description';
   static const String dateEcheance = 'date_echeance';
   static const String priorite = 'priorite';
+  static const String fait = 'fait';
   static const String idMatiere = 'id_matiere';
 
   final int idDevoir;
@@ -20,6 +22,7 @@ class Devoir {
   final String descriptionDevoir;
   final int dateEcheanceDevoir;
   final int prioriteDevoir;
+  final int faitDevoir;
   final int idMatiereDevoir;
 
   Devoir({
@@ -28,6 +31,7 @@ class Devoir {
     required this.descriptionDevoir,
     required this.dateEcheanceDevoir,
     required this.prioriteDevoir,
+    required this.faitDevoir,
     required this.idMatiereDevoir,
   });
 
@@ -37,6 +41,7 @@ class Devoir {
         descriptionDevoir = map[description],
         dateEcheanceDevoir = map[dateEcheance],
         prioriteDevoir = map[priorite],
+        faitDevoir = map[fait],
         idMatiereDevoir = map[idMatiere];
 
   Map<String, Object> toMap() {
@@ -46,6 +51,7 @@ class Devoir {
       description: descriptionDevoir,
       dateEcheance: dateEcheanceDevoir,
       priorite: prioriteDevoir,
+      fait: faitDevoir,
       idMatiere: idMatiereDevoir,
     };
   }

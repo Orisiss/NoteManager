@@ -14,7 +14,7 @@ class RecompenseEvaluationColumn {
   final int idRecompenseEvaluation;
   final int idRecompenseRecompenseEvaluation;
   final int idEvaluationRecompenseEvaluation;
-  final int dateObtentionRecompenseEvaluation;
+  final DateTime dateObtentionRecompenseEvaluation;
 
   RecompenseEvaluationColumn({
     required this.idRecompenseEvaluation,

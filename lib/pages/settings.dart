@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:note_manager/models/matiere.dart';
+import 'package:note_manager/models/professeur.dart';
+import 'package:note_manager/services/sqlite_service.dart';
 
 class MySettingsPage extends StatefulWidget {
   const MySettingsPage({Key? key}) : super(key: key);
@@ -11,6 +14,10 @@ class _MySettingsPageState extends State<MySettingsPage> {
   String _selectedLanguage = 'French';
   String? _selectedDay;
   final Map<String, String> _subjectAssignments = {};
+  final matiereController = TextEditingController();
+  final professeurController = TextEditingController();
+  final prenomController = TextEditingController();
+  final nomController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -36,17 +43,12 @@ class _MySettingsPageState extends State<MySettingsPage> {
                             decoration: const InputDecoration(
                               labelText: 'Nom de la matière',
                             ),
-                          ),
-                          TextFormField(
-                            decoration: const InputDecoration(
-                              labelText: 'Nom du professeur',
-                            ),
                           )
                         ],
                       ),
                       actions: [
                         TextButton(
-                          onPressed: () {
+                          onPressed: () async {
                             Navigator.of(context).pop();
                           },
                           child: const Text('Enregistrer'),
@@ -65,50 +67,41 @@ class _MySettingsPageState extends State<MySettingsPage> {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: const Text('Assigner des matières'),
+                      title: const Text('Ajouter des professeurs'),
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text('Sélectionner un jour:', style: TextStyle(fontSize: 16)),
-                          const SizedBox(height: 8),
-                          DropdownButton<String>(
-                            value: _selectedDay,
-                            items: <String>['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi']
-                                .map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                _selectedDay = newValue;
-                              });
-                            },
+                          TextFormField(
+                            controller: prenomController,
+                            decoration: const InputDecoration(
+                              labelText: 'Prénom du professeur',
+                            ),
                           ),
-                          const SizedBox(height: 16),
-                          const Text('Sélectionner une matière:', style: TextStyle(fontSize: 16)),
-                          const SizedBox(height: 8),
-                          DropdownButton<String>(
-                            value: _subjectAssignments[_selectedDay],
-                            items: <String>['Math', 'Science', 'Anglais', 'CEJM']
-                                .map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                _subjectAssignments[_selectedDay!] = newValue!;
-                              });
-                            },
+                          TextFormField(
+                            controller: nomController,
+                            decoration: const InputDecoration(
+                              labelText: 'Nom du professeur',
+                            ),
                           ),
                         ],
                       ),
                       actions: [
                         TextButton(
-                          onPressed: () {
+                          onPressed: () async {
+                            ProfesseurColumn professeurColumn =
+                                ProfesseurColumn(
+                              prenomProfesseur: prenomController.text,
+                              nomProfesseur: nomController.text,
+                            );
+                            SqliteService sqliteService = SqliteService();
+                            await sqliteService.insertProfesseur(professeurColumn);
+                            List<ProfesseurColumn> professeurs =
+                                await sqliteService.getAllProfesseurs();
+
+                            for (ProfesseurColumn professeur in professeurs) {
+                              print(
+                                  'ID: ${professeur.idProfesseur}, Prénom: ${professeur.prenomProfesseur}, Nom: ${professeur.nomProfesseur}');
+                            }
                             Navigator.of(context).pop();
                           },
                           child: const Text('Enregistrer'),
@@ -118,10 +111,11 @@ class _MySettingsPageState extends State<MySettingsPage> {
                   },
                 );
               },
-              child: const Text('Assigner des matières'),
+              child: const Text('Ajouter des professeurs'),
             ),
             const SizedBox(height: 16),
-            const Text('Sélectionner la langue:', style: TextStyle(fontSize: 16)),
+            const Text('Sélectionner la langue:',
+                style: TextStyle(fontSize: 16)),
             const SizedBox(height: 8),
             DropdownButton<String>(
               value: _selectedLanguage,
