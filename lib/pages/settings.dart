@@ -14,8 +14,7 @@ class _MySettingsPageState extends State<MySettingsPage> {
   String _selectedLanguage = 'French';
   String? _selectedDay;
   final Map<String, String> _subjectAssignments = {};
-  final matiereController = TextEditingController();
-  final professeurController = TextEditingController();
+  final nomMatiereController = TextEditingController();
   final prenomController = TextEditingController();
   final nomController = TextEditingController();
 
@@ -40,6 +39,7 @@ class _MySettingsPageState extends State<MySettingsPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           TextFormField(
+                            controller: nomMatiereController,
                             decoration: const InputDecoration(
                               labelText: 'Nom de la matière',
                             ),
@@ -49,6 +49,19 @@ class _MySettingsPageState extends State<MySettingsPage> {
                       actions: [
                         TextButton(
                           onPressed: () async {
+                            MatiereColumn matiereColumn =
+                                MatiereColumn(
+                              nomMatiere: nomMatiereController.text,
+                            );
+                            SqliteService sqliteService = SqliteService();
+                            await sqliteService.insertMatiere(matiereColumn);
+                            List<MatiereColumn> matieres =
+                                await sqliteService.getAllMatieres();
+
+                            for (MatiereColumn matiere in matieres) {
+                              print(
+                                  'ID: ${matiere.idMatiere}, Nom: ${matiere.nomMatiere}');
+                            }
                             Navigator.of(context).pop();
                           },
                           child: const Text('Enregistrer'),

@@ -22,12 +22,12 @@ class SqliteService {
         priorite INTEGER NOT NULL,
         fait INTEGER NOT NULL,
         id_professeur INTEGER NOT NULL,
-        OREIGN KEY (id_professeur) REFERENCES Professeur(id)
+        FOREIGN KEY (id_professeur) REFERENCES Professeur(id)
         );
       ''');
 
       await database.execute('''
-        CREATE TABLE Matière (
+        CREATE TABLE Matiere (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nom VARCHAR(255) NOT NULL
         );
@@ -104,7 +104,7 @@ class SqliteService {
 
   Future<int> insertMatiere(MatiereColumn matiere) async {
     Database db = await initializeDB();
-    return await db.insert('Matiere', matiere.toMap());
+    return await db.insert('Matiere', matiere.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<List<MatiereColumn>> getAllMatieres() async {

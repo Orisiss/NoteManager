@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class MyTodoPage extends StatelessWidget {
   const MyTodoPage({Key? key}) : super(key: key);
@@ -9,48 +10,62 @@ class MyTodoPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Ma Todo List'),
       ),
-      body: ListView(
-        children: const [
-          Card(
-            color: Colors.red,
-            child: ListTile(
-              title: Text('Task 1'),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Date d\'échéance: 01/01/2022'),
-                  Text('Matière: Mathématiques'),
-                ],
+      body: Scaffold(
+        body: SfCalendar(
+            view: CalendarView.month,
+            monthViewSettings: const MonthViewSettings(showAgenda: true, appointmentDisplayCount: 4),
+            headerHeight: 50,
+            headerStyle: const CalendarHeaderStyle(
+              backgroundColor: Colors.purple,
+              textStyle: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
               ),
             ),
-          ),
-          Card(
-            color: Colors.yellow,
-            child: ListTile(
-              title: Text('Task 2'),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Date d\'échéance: 02/01/2022'),
-                  Text('Matière: Français'),
-                ],
-              ),
-            ),
-          ),
-          Card(
-            color: Colors.green,
-            child: ListTile(
-              title: Text('Task 3'),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Date d\'échéance: 03/01/2022'),
-                  Text('Matière: Anglas'),
-                ],
-              ),
-            ),
-          ),
-        ],
+            firstDayOfWeek: 1,
+            showTodayButton: true,
+            showNavigationArrow: true,
+          )
+          // Card(
+          //   color: Colors.red,
+          //   child: ListTile(
+          //     title: Text('Task 1'),
+          //     subtitle: Column(
+          //       crossAxisAlignment: CrossAxisAlignment.start,
+          //       children: [
+          //         Text('Date d\'échéance: 01/01/2022'),
+          //         Text('Matière: Mathématiques'),
+          //       ],
+          //     ),
+          //   ),
+          // ),
+          // Card(
+          //   color: Colors.yellow,
+          //   child: ListTile(
+          //     title: Text('Task 2'),
+          //     subtitle: Column(
+          //       crossAxisAlignment: CrossAxisAlignment.start,
+          //       children: [
+          //         Text('Date d\'échéance: 02/01/2022'),
+          //         Text('Matière: Français'),
+          //       ],
+          //     ),
+          //   ),
+          // ),
+          // Card(
+          //   color: Colors.green,
+          //   child: ListTile(
+          //     title: Text('Task 3'),
+          //     subtitle: Column(
+          //       crossAxisAlignment: CrossAxisAlignment.start,
+          //       children: [
+          //         Text('Date d\'échéance: 03/01/2022'),
+          //         Text('Matière: Anglas'),
+          //       ],
+          //     ),
+          //   ),
+          // ),
+        ,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
