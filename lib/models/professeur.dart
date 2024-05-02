@@ -1,24 +1,26 @@
-class ProfesseurColumn {
+class Professeur {
   final int? idProfesseur;
-  final String prenomProfesseur;
+  final Genre genreProfesseur;
   final String nomProfesseur;
 
-  ProfesseurColumn({
+  Professeur({
     this.idProfesseur,
-    required this.prenomProfesseur,
+    required this.genreProfesseur,
     required this.nomProfesseur,
   });
 
   Map<String, Object?> toMap() {
     return {
       'id': idProfesseur,
-      'prenom': prenomProfesseur,
+      'genre': genreProfesseur.index,
       'nom': nomProfesseur,
     };
   }
 
   @override
   String toString() {
-    return 'Professeur{id: $idProfesseur, prenom: $prenomProfesseur, nom: $nomProfesseur}';
+    return '$genreProfesseur. $nomProfesseur';
   }
 }
+
+enum Genre {Mr, Mme, Mlle}

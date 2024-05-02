@@ -1,4 +1,4 @@
-class RecompenseEvaluationColumn {
+class RecompenseEvaluation {
   static final List<String> values = [
     'id',
     'id_recompense',
@@ -16,14 +16,14 @@ class RecompenseEvaluationColumn {
   final int idEvaluationRecompenseEvaluation;
   final DateTime dateObtentionRecompenseEvaluation;
 
-  RecompenseEvaluationColumn({
+  RecompenseEvaluation({
     required this.idRecompenseEvaluation,
     required this.idRecompenseRecompenseEvaluation,
     required this.idEvaluationRecompenseEvaluation,
     required this.dateObtentionRecompenseEvaluation,
   });
 
-  RecompenseEvaluationColumn.fromMap(Map<String, dynamic> map)
+  RecompenseEvaluation.fromMap(Map<String, dynamic> map)
       : idRecompenseEvaluation = map[id],
         idRecompenseRecompenseEvaluation = map[idRecompense],
         idEvaluationRecompenseEvaluation = map[idEvaluation],

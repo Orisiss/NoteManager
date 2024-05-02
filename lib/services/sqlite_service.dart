@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:note_manager/models/devoir.dart';
 import 'package:note_manager/models/evaluation.dart';
 import 'package:note_manager/models/matiere.dart';
@@ -16,20 +18,22 @@ class SqliteService {
       await database.execute('''
         CREATE TABLE Devoir (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        titre VARCHAR(255) NOT NULL,
-        description TEXT,
-        date_echeance DATE NOT NULL,
+        titre TEXT NOT NULL,
+        description TEXT NOT NULL,
+        date_echeance INTEGER NOT NULL,
         priorite INTEGER NOT NULL,
         fait INTEGER NOT NULL,
-        id_professeur INTEGER NOT NULL,
-        FOREIGN KEY (id_professeur) REFERENCES Professeur(id)
+        idMatiere INTEGER NOT NULL,
+        idProfesseur INTEGER NOT NULL,
+        FOREIGN KEY (idMatiere) REFERENCES Matiere(id),
+        FOREIGN KEY (idProfesseur) REFERENCES Professeur(id)
         );
       ''');
 
       await database.execute('''
         CREATE TABLE Matiere (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nom VARCHAR(255) NOT NULL
+        nom TEXT NOT NULL
         );
       ''');
 
@@ -37,7 +41,7 @@ class SqliteService {
         CREATE TABLE Evaluation (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         valeur INTEGER NOT NULL,
-        date DATE NOT NULL,
+        date DATETIME NOT NULL,
         id_matiere INTEGER NOT NULL,
         FOREIGN KEY (id_matiere) REFERENCES Matière(id)
         );
@@ -46,15 +50,15 @@ class SqliteService {
       await database.execute('''
         CREATE TABLE Professeur (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nom VARCHAR(255) NOT NULL,
-        prenom VARCHAR(255) NOT NULL
+        genre INTEGER NOT NULL,
+        nom TEXT NOT NULL
         );
       ''');
 
       await database.execute('''
         CREATE TABLE Recompense (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nom VARCHAR(255) NOT NULL
+        nom TEXT NOT NULL
         );
       ''');
 
@@ -62,7 +66,7 @@ class SqliteService {
         CREATE TABLE RecompenseEvaluation (
         id_devoir INTEGER NOT NULL,
         id_recompense INTEGER NOT NULL,
-        date_obtention DATE NOT NULL,
+        date_obtention DATETIME NOT NULL,
         FOREIGN KEY (id_devoir) REFERENCES Devoir(id),
         FOREIGN KEY (id_recompense) REFERENCES Recompense(id)
         );
@@ -76,25 +80,36 @@ class SqliteService {
   }
 
   Future<List<Devoir>> getAllDevoirs() async {
-    Database db = await initializeDB();
-    List<Map<String, dynamic>> maps = await db.query('Devoir');
-    return List.generate(maps.length, (i) {
-      return Devoir(
-        idDevoir: maps[i][Devoir.id],
-        titreDevoir: maps[i][Devoir.titre],
-        descriptionDevoir: maps[i][Devoir.description],
-        dateEcheanceDevoir: maps[i][Devoir.dateEcheance],
-        prioriteDevoir: maps[i][Devoir.priorite],
-        faitDevoir: maps[i][Devoir.fait],
-        idMatiereDevoir: maps[i][Devoir.idMatiere],
-      );
-    });
+    final db = await initializeDB();
+    final List<Map<String, Object?>> devoirsMaps = await db.query('Devoir');
+    return [
+      for (final {
+            'id': id as int,
+            'titre': titre as String,
+            'description': description as String,
+            'date_echeance': date_echeance as DateTime,
+            'priorite': priorite as int,
+            'fait': fait as int,
+            'id_professeur': id_professeur as int,
+            'id_matiere': id_matiere as int,
+          } in devoirsMaps)
+        Devoir(
+          id: id,
+          titre: titre,
+          description: description,
+          dateEcheance: date_echeance,
+          priorite: Priorite.values[priorite],
+          fait: fait,
+          idProfesseur: id_professeur,
+          idMatiere: id_matiere,
+        ),
+    ];
   }
 
   Future<int> updateDevoir(Devoir devoir) async {
     Database db = await initializeDB();
     return await db.update('Devoir', devoir.toMap(),
-        where: 'id = ?', whereArgs: [devoir.idDevoir]);
+        where: 'id = ?', whereArgs: [devoir.id]);
   }
 
   Future<int> deleteDevoir(int id) async {
@@ -102,23 +117,28 @@ class SqliteService {
     return await db.delete('Devoir', where: 'id =?', whereArgs: [id]);
   }
 
-  Future<int> insertMatiere(MatiereColumn matiere) async {
+  Future<int> insertMatiere(Matiere matiere) async {
     Database db = await initializeDB();
-    return await db.insert('Matiere', matiere.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    return await db.insert('Matiere', matiere.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<List<MatiereColumn>> getAllMatieres() async {
-    Database db = await initializeDB();
-    List<Map<String, dynamic>> maps = await db.query('Matiere');
-    return List.generate(maps.length, (i) {
-      return MatiereColumn(
-        idMatiere: maps[i][MatiereColumn.id],
-        nomMatiere: maps[i][MatiereColumn.nom],
-      );
-    });
+  Future<List<Matiere>> getAllMatieres() async {
+    final db = await initializeDB();
+    final List<Map<String, Object?>> matiereMaps = await db.query('Matiere');
+    return [
+      for (final {
+            'id': id as int,
+            'nom': nom as String,
+          } in matiereMaps)
+        Matiere(
+          idMatiere: id,
+          nomMatiere: nom,
+        ),
+    ];
   }
 
-  Future<int> updateMatiere(MatiereColumn matiere) async {
+  Future<int> updateMatiere(Matiere matiere) async {
     Database db = await initializeDB();
     return await db.update('Matiere', matiere.toMap(),
         where: 'id = ?', whereArgs: [matiere.idMatiere]);
@@ -129,30 +149,30 @@ class SqliteService {
     return await db.delete('Matiere', where: 'id =?', whereArgs: [id]);
   }
 
-  Future<int> insertProfesseur(ProfesseurColumn professeur) async {
+  Future<int> insertProfesseur(Professeur professeur) async {
     Database db = await initializeDB();
     return await db.insert('Professeur', professeur.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<List<ProfesseurColumn>> getAllProfesseurs() async {
+  Future<List<Professeur>> getAllProfesseurs() async {
     final db = await initializeDB();
     final List<Map<String, Object?>> professeurMaps =
         await db.query('Professeur');
     return [
       for (final {
             'id': id as int,
-            'prenom': prenomProfesseur as String,
+            'genre': genreIndex as int,
             'nom': nomProfesseur as String,
           } in professeurMaps)
-        ProfesseurColumn(
+        Professeur(
             idProfesseur: id,
-            prenomProfesseur: prenomProfesseur,
+            genreProfesseur: Genre.values[genreIndex],
             nomProfesseur: nomProfesseur),
     ];
   }
 
-  Future<int> updateProfesseur(ProfesseurColumn professeur) async {
+  Future<int> updateProfesseur(Professeur professeur) async {
     Database db = await initializeDB();
     return await db.update('Professeur', professeur.toMap(),
         where: 'id = ?', whereArgs: [professeur.idProfesseur]);
@@ -193,23 +213,23 @@ class SqliteService {
     return await db.delete('Evaluation', where: 'id = ?', whereArgs: [id]);
   }
 
-  Future<int> insertRecompense(RecompenseColumn recompense) async {
+  Future<int> insertRecompense(Recompense recompense) async {
     Database db = await initializeDB();
     return await db.insert('Recompense', recompense.toMap());
   }
 
-  Future<List<RecompenseColumn>> getAllRecompenses() async {
+  Future<List<Recompense>> getAllRecompenses() async {
     Database db = await initializeDB();
     List<Map<String, dynamic>> maps = await db.query('Recompense');
     return List.generate(maps.length, (i) {
-      return RecompenseColumn(
-        idRecompense: maps[i][RecompenseColumn.id],
-        nomRecompense: maps[i][RecompenseColumn.nom],
+      return Recompense(
+        idRecompense: maps[i][Recompense.id],
+        nomRecompense: maps[i][Recompense.nom],
       );
     });
   }
 
-  Future<int> updateRecompense(RecompenseColumn recompense) async {
+  Future<int> updateRecompense(Recompense recompense) async {
     Database db = await initializeDB();
     return await db.update('Recompense', recompense.toMap(),
         where: 'id = ?', whereArgs: [recompense.idRecompense]);
@@ -221,30 +241,30 @@ class SqliteService {
   }
 
   Future<int> insertRecompenseEvaluation(
-      RecompenseEvaluationColumn recompenseEvaluation) async {
+      RecompenseEvaluation recompenseEvaluation) async {
     Database db = await initializeDB();
     return await db.insert(
         'RecompenseEvaluation', recompenseEvaluation.toMap());
   }
 
-  Future<List<RecompenseEvaluationColumn>> getAllRecompenseEvaluation() async {
+  Future<List<RecompenseEvaluation>> getAllRecompenseEvaluation() async {
     Database db = await initializeDB();
     List<Map<String, dynamic>> maps = await db.query('RecompenseEvaluation');
     return List.generate(maps.length, (i) {
-      return RecompenseEvaluationColumn(
-        idRecompenseEvaluation: maps[i][RecompenseEvaluationColumn.id],
+      return RecompenseEvaluation(
+        idRecompenseEvaluation: maps[i][RecompenseEvaluation.id],
         idRecompenseRecompenseEvaluation: maps[i]
-            [RecompenseEvaluationColumn.idRecompense],
+            [RecompenseEvaluation.idRecompense],
         idEvaluationRecompenseEvaluation: maps[i]
-            [RecompenseEvaluationColumn.idEvaluation],
+            [RecompenseEvaluation.idEvaluation],
         dateObtentionRecompenseEvaluation: maps[i]
-            [RecompenseEvaluationColumn.dateObtention],
+            [RecompenseEvaluation.dateObtention],
       );
     });
   }
 
   Future<int> updateRecompenseEvaluation(
-      RecompenseEvaluationColumn recompenseEvaluation) async {
+      RecompenseEvaluation recompenseEvaluation) async {
     Database db = await initializeDB();
     return await db.update('RecompenseEvaluation', recompenseEvaluation.toMap(),
         where: 'id = ?',

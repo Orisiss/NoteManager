@@ -1,11 +1,11 @@
-class MatiereColumn {
+class Matiere {
   static const String id = 'id';
   static const String nom = 'nom';
 
   final int? idMatiere;
   final String nomMatiere;
 
-  MatiereColumn({
+  Matiere({
     this.idMatiere,
     required this.nomMatiere
   });

@@ -1,58 +1,36 @@
 class Devoir {
-  static final List<String> values = [
-    'id',
-    'titre',
-    'description',
-    'date_echeance',
-    'priorite',
-    'fait',
-    'id_matiere',
-  ];
-
-  static const String id = 'id';
-  static const String titre = 'titre';
-  static const String description = 'description';
-  static const String dateEcheance = 'date_echeance';
-  static const String priorite = 'priorite';
-  static const String fait = 'fait';
-  static const String idMatiere = 'id_matiere';
-
-  final int idDevoir;
-  final String titreDevoir;
-  final String descriptionDevoir;
-  final int dateEcheanceDevoir;
-  final int prioriteDevoir;
-  final int faitDevoir;
-  final int idMatiereDevoir;
+  final int? id;
+  final String titre;
+  final String description;
+  final DateTime dateEcheance;
+  final Priorite priorite;
+  final int fait;
+  final int idMatiere;
+  final int idProfesseur;
 
   Devoir({
-    required this.idDevoir,
-    required this.titreDevoir,
-    required this.descriptionDevoir,
-    required this.dateEcheanceDevoir,
-    required this.prioriteDevoir,
-    required this.faitDevoir,
-    required this.idMatiereDevoir,
+    this.id,
+    required this.titre,
+    required this.description,
+    required this.dateEcheance,
+    required this.priorite,
+    required this.fait,
+    required this.idMatiere,
+    required this.idProfesseur,
   });
 
-  Devoir.fromMap(Map<String, dynamic> map)
-      : idDevoir = map[id],
-        titreDevoir = map[titre],
-        descriptionDevoir = map[description],
-        dateEcheanceDevoir = map[dateEcheance],
-        prioriteDevoir = map[priorite],
-        faitDevoir = map[fait],
-        idMatiereDevoir = map[idMatiere];
-
-  Map<String, Object> toMap() {
+  Map<String, Object?> toMap() {
     return {
-      id: idDevoir,
-      titre: titreDevoir,
-      description: descriptionDevoir,
-      dateEcheance: dateEcheanceDevoir,
-      priorite: prioriteDevoir,
-      fait: faitDevoir,
-      idMatiere: idMatiereDevoir,
+      'id': id,
+      'titre': titre,
+      'description': description,
+      'date_echeance': dateEcheance.toIso8601String(),
+      'priorite': priorite.index,
+      'fait': fait,
+      'idMatiere': idMatiere,
+      'idProfesseur': idProfesseur,
     };
   }
 }
+
+enum Priorite { Faible, Moyen, Eleve, Urgent }

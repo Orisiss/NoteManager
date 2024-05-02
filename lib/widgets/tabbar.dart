@@ -12,7 +12,7 @@ class TabBarWidget extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Bienvenu <NAME>,'),
+          title: const Text('Bienvenue Louis,'),
           centerTitle: false,
           bottom: const TabBar(
             indicatorColor: Color.fromRGBO(255, 163, 125, 1),

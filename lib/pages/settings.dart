@@ -12,10 +12,9 @@ class MySettingsPage extends StatefulWidget {
 
 class _MySettingsPageState extends State<MySettingsPage> {
   String _selectedLanguage = 'French';
-  String? _selectedDay;
-  final Map<String, String> _subjectAssignments = {};
   final nomMatiereController = TextEditingController();
-  final prenomController = TextEditingController();
+  final genreController = TextEditingController();
+  Genre? _selectedGenre;
   final nomController = TextEditingController();
 
   @override
@@ -49,19 +48,12 @@ class _MySettingsPageState extends State<MySettingsPage> {
                       actions: [
                         TextButton(
                           onPressed: () async {
-                            MatiereColumn matiereColumn =
-                                MatiereColumn(
+                            Matiere matiereColumn = Matiere(
                               nomMatiere: nomMatiereController.text,
                             );
                             SqliteService sqliteService = SqliteService();
                             await sqliteService.insertMatiere(matiereColumn);
-                            List<MatiereColumn> matieres =
-                                await sqliteService.getAllMatieres();
-
-                            for (MatiereColumn matiere in matieres) {
-                              print(
-                                  'ID: ${matiere.idMatiere}, Nom: ${matiere.nomMatiere}');
-                            }
+                            nomMatiereController.clear();
                             Navigator.of(context).pop();
                           },
                           child: const Text('Enregistrer'),
@@ -84,10 +76,21 @@ class _MySettingsPageState extends State<MySettingsPage> {
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          TextFormField(
-                            controller: prenomController,
+                          DropdownButtonFormField<Genre>(
+                            value: _selectedGenre,
+                            items: Genre.values.map((Genre genre) {
+                              return DropdownMenuItem<Genre>(
+                                value: genre,
+                                child: Text(genre.toString().split('.').last),
+                              );
+                            }).toList(),
+                            onChanged: (Genre? newValue) {
+                              setState(() {
+                                _selectedGenre = newValue!;
+                              });
+                            },
                             decoration: const InputDecoration(
-                              labelText: 'Prénom du professeur',
+                              labelText: 'Genre',
                             ),
                           ),
                           TextFormField(
@@ -101,20 +104,16 @@ class _MySettingsPageState extends State<MySettingsPage> {
                       actions: [
                         TextButton(
                           onPressed: () async {
-                            ProfesseurColumn professeurColumn =
-                                ProfesseurColumn(
-                              prenomProfesseur: prenomController.text,
+                            Professeur professeur = Professeur(
+                              idProfesseur: null,
+                              genreProfesseur: _selectedGenre!,
                               nomProfesseur: nomController.text,
                             );
                             SqliteService sqliteService = SqliteService();
-                            await sqliteService.insertProfesseur(professeurColumn);
-                            List<ProfesseurColumn> professeurs =
-                                await sqliteService.getAllProfesseurs();
-
-                            for (ProfesseurColumn professeur in professeurs) {
-                              print(
-                                  'ID: ${professeur.idProfesseur}, Prénom: ${professeur.prenomProfesseur}, Nom: ${professeur.nomProfesseur}');
-                            }
+                            await sqliteService
+                                .insertProfesseur(professeur);
+                            _selectedGenre = null;
+                            nomController.clear();
                             Navigator.of(context).pop();
                           },
                           child: const Text('Enregistrer'),
