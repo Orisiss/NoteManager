@@ -4,7 +4,6 @@ class Devoir {
   final String description;
   final DateTime dateEcheance;
   final Priorite priorite;
-  final int fait;
   final int idMatiere;
   final int idProfesseur;
 
@@ -14,7 +13,6 @@ class Devoir {
     required this.description,
     required this.dateEcheance,
     required this.priorite,
-    required this.fait,
     required this.idMatiere,
     required this.idProfesseur,
   });
@@ -26,7 +24,6 @@ class Devoir {
       'description': description,
       'date_echeance': dateEcheance.toIso8601String(),
       'priorite': priorite.index,
-      'fait': fait,
       'idMatiere': idMatiere,
       'idProfesseur': idProfesseur,
     };

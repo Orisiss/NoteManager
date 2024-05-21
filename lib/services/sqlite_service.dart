@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:note_manager/models/devoir.dart';
 import 'package:note_manager/models/evaluation.dart';
 import 'package:note_manager/models/matiere.dart';
@@ -22,7 +20,6 @@ class SqliteService {
         description TEXT NOT NULL,
         date_echeance INTEGER NOT NULL,
         priorite INTEGER NOT NULL,
-        fait INTEGER NOT NULL,
         idMatiere INTEGER NOT NULL,
         idProfesseur INTEGER NOT NULL,
         FOREIGN KEY (idMatiere) REFERENCES Matiere(id),
@@ -83,25 +80,15 @@ class SqliteService {
     final db = await initializeDB();
     final List<Map<String, Object?>> devoirsMaps = await db.query('Devoir');
     return [
-      for (final {
-            'id': id as int,
-            'titre': titre as String,
-            'description': description as String,
-            'date_echeance': date_echeance as DateTime,
-            'priorite': priorite as int,
-            'fait': fait as int,
-            'id_professeur': id_professeur as int,
-            'id_matiere': id_matiere as int,
-          } in devoirsMaps)
+      for (final map in devoirsMaps)
         Devoir(
-          id: id,
-          titre: titre,
-          description: description,
-          dateEcheance: date_echeance,
-          priorite: Priorite.values[priorite],
-          fait: fait,
-          idProfesseur: id_professeur,
-          idMatiere: id_matiere,
+          id: map['id'] as int,
+          titre: map['titre'] as String,
+          description: map['description'] as String,
+          dateEcheance: DateTime.parse(map['date_echeance'].toString()),
+          priorite: Priorite.values[map['priorite'] as int],
+          idProfesseur: int.parse(map['idProfesseur'].toString()),
+          idMatiere: int.parse(map['idMatiere'].toString()),
         ),
     ];
   }

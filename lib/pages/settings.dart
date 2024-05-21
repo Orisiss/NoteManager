@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:note_manager/models/matiere.dart';
 import 'package:note_manager/models/professeur.dart';
 import 'package:note_manager/services/sqlite_service.dart';
@@ -52,7 +53,30 @@ class _MySettingsPageState extends State<MySettingsPage> {
                               nomMatiere: nomMatiereController.text,
                             );
                             SqliteService sqliteService = SqliteService();
-                            await sqliteService.insertMatiere(matiereColumn);
+                            int insertionSuccess = await sqliteService
+                                .insertMatiere(matiereColumn);
+                            if (insertionSuccess > 0) {
+                              Fluttertoast.showToast(
+                                  msg: 'Matière ajoutée',
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.green,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
+                              nomMatiereController.clear();
+                              Navigator.of(context).pop();
+                            } else {
+                              Fluttertoast.showToast(
+                                  msg:
+                                      'Erreur lors de l\'insertion de la matière',
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
+                            }
                             nomMatiereController.clear();
                             Navigator.of(context).pop();
                           },
@@ -110,8 +134,30 @@ class _MySettingsPageState extends State<MySettingsPage> {
                               nomProfesseur: nomController.text,
                             );
                             SqliteService sqliteService = SqliteService();
-                            await sqliteService
+                            int insertionSuccess = await sqliteService
                                 .insertProfesseur(professeur);
+                            if (insertionSuccess > 0) {
+                              Fluttertoast.showToast(
+                                  msg: 'Professeur ajouté(e)',
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.green,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
+                              nomMatiereController.clear();
+                              Navigator.of(context).pop();
+                            } else {
+                              Fluttertoast.showToast(
+                                  msg:
+                                      'Erreur lors de l\'insertion du professeur',
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
+                            }
                             _selectedGenre = null;
                             nomController.clear();
                             Navigator.of(context).pop();
