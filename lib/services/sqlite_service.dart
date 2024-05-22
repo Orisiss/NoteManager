@@ -37,10 +37,12 @@ class SqliteService {
       await database.execute('''
         CREATE TABLE Evaluation (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        titre TEXT NOT NULL,
         valeur INTEGER NOT NULL,
+        coef INTEGER NOT NULL,
         date DATETIME NOT NULL,
-        id_matiere INTEGER NOT NULL,
-        FOREIGN KEY (id_matiere) REFERENCES Matière(id)
+        idMatiere INTEGER NOT NULL,
+        FOREIGN KEY (idMatiere) REFERENCES Matiere(id)
         );
       ''');
 
@@ -61,11 +63,11 @@ class SqliteService {
 
       await database.execute('''
         CREATE TABLE RecompenseEvaluation (
-        id_devoir INTEGER NOT NULL,
-        id_recompense INTEGER NOT NULL,
-        date_obtention DATETIME NOT NULL,
-        FOREIGN KEY (id_devoir) REFERENCES Devoir(id),
-        FOREIGN KEY (id_recompense) REFERENCES Recompense(id)
+        idDevoir INTEGER NOT NULL,
+        idRecompense INTEGER NOT NULL,
+        dateObtention DATETIME NOT NULL,
+        FOREIGN KEY (idDevoir) REFERENCES Devoir(id),
+        FOREIGN KEY (idRecompense) REFERENCES Recompense(id)
         );
       ''');
     }, version: 1);
@@ -176,23 +178,25 @@ class SqliteService {
   }
 
   Future<List<Evaluation>> getAllEvaluations() async {
-    Database db = await initializeDB();
-    List<Map<String, dynamic>> maps = await db.query('Evaluation');
-    return List.generate(maps.length, (i) {
-      return Evaluation(
-        idEvaluation: maps[i][Evaluation.id],
-        titleEvaluation: maps[i][Evaluation.title],
-        valeurEvaluation: maps[i][Evaluation.valeur],
-        dateEvaluation: maps[i][Evaluation.date],
-        idMatiereEvaluation: maps[i][Evaluation.id_matiere],
-      );
-    });
+    final db = await initializeDB();
+    final List<Map<String, Object?>> evaluationsMaps = await db.query('Evaluation');
+    return [
+      for (final map in evaluationsMaps)
+        Evaluation(
+          id: map['id'] as int,
+          titre: map['titre'] as String,
+          valeur: map['valeur'] as int,
+          coef: map['coef'] as int,
+          date: DateTime.parse(map['date'].toString()),
+          idMatiere: int.parse(map['idMatiere'].toString()),
+        ),
+    ];
   }
 
   Future<int> updateEvaluation(Evaluation evaluation) async {
     Database db = await initializeDB();
     return await db.update('Evaluation', evaluation.toMap(),
-        where: 'id = ?', whereArgs: [evaluation.idEvaluation]);
+        where: 'id = ?', whereArgs: [evaluation.id]);
   }
 
   Future<int> deleteEvaluation(int id) async {
