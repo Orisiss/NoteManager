@@ -236,14 +236,13 @@ class _MyTodoPageState extends State<MyTodoPage> {
                     ),
                     actions: [
                       TextButton(
-                        onPressed: () async {
-                          SqliteService sqliteService = SqliteService();
-                          sqliteService.deleteDevoir(appointmentId);
-                          await _getDevoirs();
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text('Supprimer')
-                      ),
+                          onPressed: () async {
+                            SqliteService sqliteService = SqliteService();
+                            sqliteService.deleteDevoir(appointmentId);
+                            await _getDevoirs();
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Supprimer')),
                       TextButton(
                         child: const Text('Annuler'),
                         onPressed: () async {

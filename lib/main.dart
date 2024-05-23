@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:note_manager/services/sqlite_service.dart';
 import 'package:note_manager/widgets/tabbar.dart';
-import 'package:sqflite/sqflite.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  SqliteService sqliteService = SqliteService();
-  Database db = await sqliteService.initializeDB();
   runApp(const MyApp());
 }
 
