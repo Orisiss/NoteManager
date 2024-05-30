@@ -1,40 +1,22 @@
 class RecompenseEvaluation {
-  static final List<String> values = [
-    'id',
-    'id_recompense',
-    'id_evaluation',
-    'date_obtention'
-  ];
-
-  static const String id = 'id';
-  static const String idRecompense = 'id_recompense';
-  static const String idEvaluation = 'id_evaluation';
-  static const String dateObtention = 'date_obtention';
-
-  final int idRecompenseEvaluation;
-  final int idRecompenseRecompenseEvaluation;
-  final int idEvaluationRecompenseEvaluation;
-  final DateTime dateObtentionRecompenseEvaluation;
+  final int? id;
+  final int idRecompense;
+  final int idEvaluation;
+  final DateTime dateObtention;
 
   RecompenseEvaluation({
-    required this.idRecompenseEvaluation,
-    required this.idRecompenseRecompenseEvaluation,
-    required this.idEvaluationRecompenseEvaluation,
-    required this.dateObtentionRecompenseEvaluation,
+    required this.id,
+    required this.idRecompense,
+    required this.idEvaluation,
+    required this.dateObtention,
   });
 
-  RecompenseEvaluation.fromMap(Map<String, dynamic> map)
-      : idRecompenseEvaluation = map[id],
-        idRecompenseRecompenseEvaluation = map[idRecompense],
-        idEvaluationRecompenseEvaluation = map[idEvaluation],
-        dateObtentionRecompenseEvaluation = map[dateObtention];
-
-  Map<String, Object> toMap() {
+  Map<String, Object?> toMap() {
     return {
-      id: idRecompenseEvaluation,
-      idRecompense: idRecompenseRecompenseEvaluation,
-      idEvaluation: idEvaluationRecompenseEvaluation,
-      dateObtention: dateObtentionRecompenseEvaluation,
+      'id': id,
+      'idRecompense': idRecompense,
+      'idEvaluation': idEvaluation,
+      'dateObtention': dateObtention.toIso8601String(),
     };
   }
 }

@@ -57,16 +57,19 @@ class SqliteService {
       await database.execute('''
         CREATE TABLE Recompense (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nom TEXT NOT NULL
+        nom TEXT NOT NULL,
+        points_requis INTEGER NOT NULL,
+        isObtained BOOL NOT NULL
         );
       ''');
 
       await database.execute('''
         CREATE TABLE RecompenseEvaluation (
-        idDevoir INTEGER NOT NULL,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        idEvaluation INTEGER NOT NULL,
         idRecompense INTEGER NOT NULL,
         dateObtention DATETIME NOT NULL,
-        FOREIGN KEY (idDevoir) REFERENCES Devoir(id),
+        FOREIGN KEY (idEvaluation) REFERENCES Devoir(id),
         FOREIGN KEY (idRecompense) REFERENCES Recompense(id)
         );
       ''');
@@ -174,12 +177,31 @@ class SqliteService {
 
   Future<int> insertEvaluation(Evaluation evaluation) async {
     Database db = await initializeDB();
-    return await db.insert('Evaluation', evaluation.toMap());
+    int id = await db.insert('Evaluation', evaluation.toMap());
+    List<Evaluation> allEvaluations = await getAllEvaluations();
+    int totalPoints =
+        allEvaluations.fold(0, (sum, e) => sum + e.valeur * e.coef);
+    List<Recompense> allRecompenses = await getAllRecompenses();
+    for (Recompense recompense in allRecompenses) {
+      if (totalPoints >= recompense.points_requis) {
+        recompense.isObtained = true;
+        await updateRecompense(recompense);
+        RecompenseEvaluation recompenseEvaluation = RecompenseEvaluation(
+          id: null,
+          idRecompense: recompense.id!,
+          idEvaluation: id,
+          dateObtention: evaluation.date,
+        );
+        await insertRecompenseEvaluation(recompenseEvaluation);
+      }
+    }
+    return id;
   }
 
   Future<List<Evaluation>> getAllEvaluations() async {
     final db = await initializeDB();
-    final List<Map<String, Object?>> evaluationsMaps = await db.query('Evaluation');
+    final List<Map<String, Object?>> evaluationsMaps =
+        await db.query('Evaluation');
     return [
       for (final map in evaluationsMaps)
         Evaluation(
@@ -211,19 +233,21 @@ class SqliteService {
 
   Future<List<Recompense>> getAllRecompenses() async {
     Database db = await initializeDB();
-    List<Map<String, dynamic>> maps = await db.query('Recompense');
-    return List.generate(maps.length, (i) {
-      return Recompense(
-        idRecompense: maps[i][Recompense.id],
-        nomRecompense: maps[i][Recompense.nom],
-      );
-    });
+    List<Map<String, Object?>> recompensesMaps = await db.query('Recompense');
+    return [
+      for (final map in recompensesMaps)
+        Recompense(
+            id: map['id'] as int,
+            points_requis: map['points_requis'] as int,
+            nom: map['nom'] as String,
+            isObtained: (map['isObtained'] as int) == 1 ? true : false)
+    ];
   }
 
   Future<int> updateRecompense(Recompense recompense) async {
     Database db = await initializeDB();
     return await db.update('Recompense', recompense.toMap(),
-        where: 'id = ?', whereArgs: [recompense.idRecompense]);
+        where: 'id = ?', whereArgs: [recompense.id]);
   }
 
   Future<int> deleteRecompense(int id) async {
@@ -240,31 +264,50 @@ class SqliteService {
 
   Future<List<RecompenseEvaluation>> getAllRecompenseEvaluation() async {
     Database db = await initializeDB();
-    List<Map<String, dynamic>> maps = await db.query('RecompenseEvaluation');
-    return List.generate(maps.length, (i) {
-      return RecompenseEvaluation(
-        idRecompenseEvaluation: maps[i][RecompenseEvaluation.id],
-        idRecompenseRecompenseEvaluation: maps[i]
-            [RecompenseEvaluation.idRecompense],
-        idEvaluationRecompenseEvaluation: maps[i]
-            [RecompenseEvaluation.idEvaluation],
-        dateObtentionRecompenseEvaluation: maps[i]
-            [RecompenseEvaluation.dateObtention],
-      );
-    });
+    List<Map<String, Object?>> recompenseEvaluationsMaps =
+        await db.query('RecompenseEvaluation');
+    return [
+      for (final map in recompenseEvaluationsMaps)
+        RecompenseEvaluation(
+          id: map['id'] as int,
+          idRecompense: map['idRecompense'] as int,
+          idEvaluation: map['idEvaluation'] as int,
+          dateObtention: DateTime.parse(map['dateObtention'].toString()),
+        )
+    ];
   }
 
   Future<int> updateRecompenseEvaluation(
       RecompenseEvaluation recompenseEvaluation) async {
     Database db = await initializeDB();
     return await db.update('RecompenseEvaluation', recompenseEvaluation.toMap(),
-        where: 'id = ?',
-        whereArgs: [recompenseEvaluation.idRecompenseEvaluation]);
+        where: 'id = ?', whereArgs: [recompenseEvaluation.id]);
   }
 
   Future<int> deleteRecompenseEvaluation(int id) async {
     Database db = await initializeDB();
     return await db
         .delete('RecompenseEvaluation', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<void> initializeRewards() async {
+    List<Recompense> existingRewards = await getAllRecompenses();
+    if (existingRewards.isEmpty) {
+      List<Recompense> defaultRewards = [
+        Recompense(
+            id: 1, points_requis: 100, nom: 'Recompense 1', isObtained: false),
+        Recompense(
+            id: 2, points_requis: 200, nom: 'Recompense 2', isObtained: false),
+        Recompense(
+            id: 3, points_requis: 300, nom: 'Recompense 3', isObtained: false),
+        Recompense(
+            id: 4, points_requis: 400, nom: 'Recompense 4', isObtained: false),
+        Recompense(
+            id: 5, points_requis: 500, nom: 'Recompense 5', isObtained: false),
+      ];
+      for (Recompense reward in defaultRewards) {
+        await insertRecompense(reward);
+      }
+    }
   }
 }

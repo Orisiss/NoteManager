@@ -42,7 +42,7 @@ class _MyEvaluationPageState extends State<MyEvaluationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Évaluations'),
+        title: const Text('Evaluations'),
       ),
       body: FutureBuilder<List<Evaluation>>(
         future: SqliteService().getAllEvaluations(),
@@ -195,7 +195,8 @@ class _MyEvaluationPageState extends State<MyEvaluationPage> {
                                           fontSize: 16.0);
                                     } else {
                                       Fluttertoast.showToast(
-                                          msg: "Erreur lors de la modification de l'évaluation",
+                                          msg:
+                                              "Erreur lors de la modification de l'évaluation",
                                           toastLength: Toast.LENGTH_SHORT,
                                           gravity: ToastGravity.BOTTOM,
                                           timeInSecForIosWeb: 1,
@@ -355,7 +356,6 @@ class _MyEvaluationPageState extends State<MyEvaluationPage> {
                             fontSize: 16.0);
                       } else {
                         Evaluation evaluation = Evaluation(
-                            id: null,
                             titre: _titreController.text,
                             valeur: int.parse(_noteController.text),
                             coef: int.parse(_coefController.text),

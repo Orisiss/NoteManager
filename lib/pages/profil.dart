@@ -31,12 +31,12 @@ class MyProfilPage extends StatelessWidget {
             ),
             SizedBox(height: 8),
             Text(
-              'Moyenne générale: 16',
+              'Moyenne générale: 20',
               style: TextStyle(fontSize: 20),
             ),
             SizedBox(height: 8),
             Text(
-              'Récompenses: 5',
+              'Récompenses: 1',
               style: TextStyle(fontSize: 20),
             ),
           ],

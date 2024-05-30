@@ -1,5 +1,5 @@
 class Evaluation {
-  final int? id;
+  int? id;
   final String titre;
   final int valeur;
   final int coef;

@@ -1,28 +1,22 @@
 class Recompense {
-  static final List<String> values = [
-    'id',
-    'nom',
-  ];
-
-  static const String id = 'id';
-  static const String nom = 'nom';
-
-  final int idRecompense;
-  final String nomRecompense;
+  final int? id;
+  final int points_requis;
+  final String nom;
+  bool isObtained;
 
   Recompense({
-    required this.idRecompense,
-    required this.nomRecompense,
+    this.id,
+    required this.points_requis,
+    required this.nom, 
+    this.isObtained = false,
   });
 
-  Recompense.fromMap(Map<String, dynamic> map)
-      : idRecompense = map[id],
-        nomRecompense = map[nom];
-
-  Map<String, Object> toMap() {
+  Map<String, Object?> toMap() {
     return {
-      id: idRecompense,
-      nom: nomRecompense,
+      'id': id,
+      'points_requis': points_requis,
+      'nom': nom,
+      'isObtained': isObtained ? 1 : 0,
     };
   }
 }
