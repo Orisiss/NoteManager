@@ -26,20 +26,20 @@ class _MyTodoPageState extends State<MyTodoPage> {
   List<Appointment> _devoirsToAppointments() {
     return _devoirs.map((devoir) {
       Matiere matiere = _matieres
-          .firstWhere((matiere) => matiere.idMatiere == devoir.idMatiere);
+          .firstWhere((matiere) => matiere.id == devoir.idMatiere);
       Professeur professeur = _professeurs.firstWhere(
-          (professeur) => professeur.idProfesseur == devoir.idProfesseur);
+          (professeur) => professeur.id == devoir.idProfesseur);
       return Appointment(
           id: devoir.id,
           startTime: devoir.dateEcheance,
           endTime: devoir.dateEcheance,
           subject: devoir.titre +
               ' - ' +
-              matiere.nomMatiere +
+              matiere.nom +
               ' - ' +
-              professeur.genreProfesseur.toString().split('.').last +
+              professeur.genre.toString().split('.').last +
               '. ' +
-              professeur.nomProfesseur,
+              professeur.nom,
           isAllDay: true,
           notes: devoir.description +
               ' - Priorité: ' +
@@ -113,9 +113,9 @@ class _MyTodoPageState extends State<MyTodoPage> {
               Devoir devoir = _devoirs.firstWhere((d) => d.id == appointmentId);
               _selectedPriority = devoir.priorite;
               _selectedMatiere =
-                  _matieres.firstWhere((m) => m.idMatiere == devoir.idMatiere);
+                  _matieres.firstWhere((m) => m.id == devoir.idMatiere);
               _selectedProfesseur = _professeurs
-                  .firstWhere((p) => p.idProfesseur == devoir.idProfesseur);
+                  .firstWhere((p) => p.id == devoir.idProfesseur);
               selectedDateEcheance = appointment.endTime;
               _dateEcheanceController.text =
                   DateFormat('yyyy-MM-dd').format(devoir.dateEcheance);
@@ -206,7 +206,7 @@ class _MyTodoPageState extends State<MyTodoPage> {
                             items: _matieres.map((Matiere matiere) {
                               return DropdownMenuItem<Matiere>(
                                 value: matiere,
-                                child: Text(matiere.nomMatiere),
+                                child: Text(matiere.nom),
                               );
                             }).toList(),
                             decoration: const InputDecoration(
@@ -224,7 +224,7 @@ class _MyTodoPageState extends State<MyTodoPage> {
                               return DropdownMenuItem<Professeur>(
                                 value: professeur,
                                 child: Text(
-                                    '${professeur.genreProfesseur.toString().split('.').last} ${professeur.nomProfesseur}'),
+                                    '${professeur.genre.toString().split('.').last} ${professeur.nom}'),
                               );
                             }).toList(),
                             decoration: const InputDecoration(
@@ -258,8 +258,8 @@ class _MyTodoPageState extends State<MyTodoPage> {
                               description: descriptionController.text,
                               dateEcheance: selectedDateEcheance!,
                               priorite: _selectedPriority!,
-                              idMatiere: _selectedMatiere!.idMatiere!,
-                              idProfesseur: _selectedProfesseur!.idProfesseur!);
+                              idMatiere: _selectedMatiere!.id!,
+                              idProfesseur: _selectedProfesseur!.id!);
                           SqliteService sqliteService = SqliteService();
                           int updateId =
                               await sqliteService.updateDevoir(devoir);
@@ -408,7 +408,7 @@ class _MyTodoPageState extends State<MyTodoPage> {
                         items: _matieres.map((Matiere matiere) {
                           return DropdownMenuItem<Matiere>(
                             value: matiere,
-                            child: Text(matiere.nomMatiere),
+                            child: Text(matiere.nom),
                           );
                         }).toList(),
                         decoration: const InputDecoration(
@@ -426,7 +426,7 @@ class _MyTodoPageState extends State<MyTodoPage> {
                           return DropdownMenuItem<Professeur>(
                             value: professeur,
                             child: Text(
-                                '${professeur.genreProfesseur.toString().split('.').last} ${professeur.nomProfesseur}'),
+                                '${professeur.genre.toString().split('.').last} ${professeur.nom}'),
                           );
                         }).toList(),
                         decoration: const InputDecoration(
@@ -466,8 +466,8 @@ class _MyTodoPageState extends State<MyTodoPage> {
                             description: descriptionController.text,
                             dateEcheance: selectedDateEcheance!,
                             priorite: _selectedPriority!,
-                            idMatiere: _selectedMatiere!.idMatiere!,
-                            idProfesseur: _selectedProfesseur!.idProfesseur!);
+                            idMatiere: _selectedMatiere!.id!,
+                            idProfesseur: _selectedProfesseur!.id!);
                         SqliteService sqliteService = SqliteService();
                         int insertionId =
                             await sqliteService.insertDevoir(devoir);

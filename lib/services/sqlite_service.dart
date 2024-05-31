@@ -124,8 +124,8 @@ class SqliteService {
             'nom': nom as String,
           } in matiereMaps)
         Matiere(
-          idMatiere: id,
-          nomMatiere: nom,
+          id: id,
+          nom: nom,
         ),
     ];
   }
@@ -133,7 +133,7 @@ class SqliteService {
   Future<int> updateMatiere(Matiere matiere) async {
     Database db = await initializeDB();
     return await db.update('Matiere', matiere.toMap(),
-        where: 'id = ?', whereArgs: [matiere.idMatiere]);
+        where: 'id = ?', whereArgs: [matiere.id]);
   }
 
   Future<int> deleteMatiere(int id) async {
@@ -149,25 +149,21 @@ class SqliteService {
 
   Future<List<Professeur>> getAllProfesseurs() async {
     final db = await initializeDB();
-    final List<Map<String, Object?>> professeurMaps =
-        await db.query('Professeur');
+    final List<Map<String, Object?>> professeursMaps = await db.query('Professeur');
     return [
-      for (final {
-            'id': id as int,
-            'genre': genreIndex as int,
-            'nom': nomProfesseur as String,
-          } in professeurMaps)
+      for (final map in professeursMaps)
         Professeur(
-            idProfesseur: id,
-            genreProfesseur: Genre.values[genreIndex],
-            nomProfesseur: nomProfesseur),
+          id: map['id'] as int,
+          genre: Genre.values[map['genre'] as int],
+          nom: map['nom'] as String,
+        ),
     ];
   }
 
   Future<int> updateProfesseur(Professeur professeur) async {
     Database db = await initializeDB();
     return await db.update('Professeur', professeur.toMap(),
-        where: 'id = ?', whereArgs: [professeur.idProfesseur]);
+        where: 'id = ?', whereArgs: [professeur.id]);
   }
 
   Future<int> deleteProfesseur(int id) async {

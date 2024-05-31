@@ -1,24 +1,21 @@
 class Matiere {
-  static const String id = 'id';
-  static const String nom = 'nom';
-
-  final int? idMatiere;
-  final String nomMatiere;
+  final int? id;
+  final String nom;
 
   Matiere({
-    this.idMatiere,
-    required this.nomMatiere
+    this.id,
+    required this.nom
   });
 
   Map<String, Object?> toMap() {
     return {
-      'id': idMatiere,
-      'nom': nomMatiere,
+      'id': id,
+      'nom': nom,
     };
   }
 
   @override
   String toString() {
-    return 'Matiere{id: $idMatiere, nom: $nomMatiere}';
+    return 'Matiere{id: $id, nom: $nom}';
   }
 }

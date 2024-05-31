@@ -1,25 +1,25 @@
 class Professeur {
-  final int? idProfesseur;
-  final Genre genreProfesseur;
-  final String nomProfesseur;
+  final int? id;
+  final Genre genre;
+  final String nom;
 
   Professeur({
-    this.idProfesseur,
-    required this.genreProfesseur,
-    required this.nomProfesseur,
+    this.id,
+    required this.genre,
+    required this.nom,
   });
 
   Map<String, Object?> toMap() {
     return {
-      'id': idProfesseur,
-      'genre': genreProfesseur.index,
-      'nom': nomProfesseur,
+      'id': id,
+      'genre': genre.index,
+      'nom': nom,
     };
   }
 
   @override
   String toString() {
-    return '$genreProfesseur. $nomProfesseur';
+    return '$genre. $nom';
   }
 }
 

@@ -1,8 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:note_manager/models/evaluation.dart';
 import 'package:note_manager/pages/settings.dart';
+import 'package:note_manager/services/sqlite_service.dart';
 
-class MyProfilPage extends StatelessWidget {
+class MyProfilPage extends StatefulWidget {
   const MyProfilPage({Key? key}) : super(key: key);
+
+  @override
+  _MyProfilPageState createState() => _MyProfilPageState();
+}
+
+class _MyProfilPageState extends State<MyProfilPage> {
+  double? average;
+
+  @override
+  void initState() {
+    super.initState();
+    _calculateAverage();
+  }
+
+  _calculateAverage() async {
+    SqliteService sqliteService = SqliteService();
+    List<Evaluation> evaluations = await sqliteService.getAllEvaluations();
+    if (evaluations.isNotEmpty) {
+      double total = evaluations.fold(0, (sum, item) => sum + item.valeur);
+      setState(() {
+        average = total / evaluations.length;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -10,32 +36,32 @@ class MyProfilPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Mon profil'),
       ),
-      body: const Center(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            CircleAvatar(
+            const CircleAvatar(
               backgroundImage: AssetImage('lib/assets/avatar.png'),
               radius: 80,
             ),
-            SizedBox(height: 24),
-            Text(
+            const SizedBox(height: 24),
+            const Text(
               'Louis Pichon',
               style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 16),
+            const Text(
               'Classe: SIAP-2',
               style: TextStyle(fontSize: 20),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              'Moyenne générale: 20',
-              style: TextStyle(fontSize: 20),
+              'Moyenne générale: ${average ?? 'N/A'}',
+              style: const TextStyle(fontSize: 20),
             ),
-            SizedBox(height: 8),
-            Text(
+            const SizedBox(height: 8),
+            const Text(
               'Récompenses: 1',
               style: TextStyle(fontSize: 20),
             ),

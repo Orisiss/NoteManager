@@ -67,8 +67,7 @@ class _MyEvaluationPageState extends State<MyEvaluationPage> {
                           DateFormat('yyyy-MM-dd').format(evaluation.date);
                       _selectedDate = evaluation.date;
                       _selectedMatiere = _matieres.firstWhere(
-                          (m) => m.idMatiere == evaluation.idMatiere);
-
+                          (m) => m.id == evaluation.idMatiere);
                       showDialog(
                         context: context,
                         builder: (context) {
@@ -142,7 +141,7 @@ class _MyEvaluationPageState extends State<MyEvaluationPage> {
                                     items: _matieres.map((Matiere matiere) {
                                       return DropdownMenuItem<Matiere>(
                                         value: matiere,
-                                        child: Text(matiere.nomMatiere),
+                                        child: Text(matiere.nom),
                                       );
                                     }).toList(),
                                     decoration: const InputDecoration(
@@ -178,7 +177,7 @@ class _MyEvaluationPageState extends State<MyEvaluationPage> {
                                         coef: int.parse(_coefController.text),
                                         date: _selectedDate!,
                                         idMatiere:
-                                            _selectedMatiere!.idMatiere!);
+                                            _selectedMatiere!.id!);
                                     SqliteService sqliteService =
                                         SqliteService();
                                     int updateId = await sqliteService
@@ -322,7 +321,7 @@ class _MyEvaluationPageState extends State<MyEvaluationPage> {
                         items: _matieres.map((Matiere matiere) {
                           return DropdownMenuItem<Matiere>(
                             value: matiere,
-                            child: Text(matiere.nomMatiere),
+                            child: Text(matiere.nom),
                           );
                         }).toList(),
                         decoration: const InputDecoration(
@@ -360,7 +359,7 @@ class _MyEvaluationPageState extends State<MyEvaluationPage> {
                             valeur: int.parse(_noteController.text),
                             coef: int.parse(_coefController.text),
                             date: _selectedDate!,
-                            idMatiere: _selectedMatiere!.idMatiere!);
+                            idMatiere: _selectedMatiere!.id!);
                         SqliteService sqliteService = SqliteService();
                         int insertionId =
                             await sqliteService.insertEvaluation(evaluation);
