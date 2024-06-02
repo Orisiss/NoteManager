@@ -41,6 +41,7 @@ dependencies:
   syncfusion_flutter_calendar: ^25.1.39
   syncfusion_flutter_datepicker: ^25.1.40
   fluttertoast: ^8.2.5
+  shared_preferences: ^2.0.6
 
 dev_dependencies:
   flutter_test:

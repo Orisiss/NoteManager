@@ -1,3 +1,4 @@
+/// Représente un devoir.
 class Devoir {
   final int? id;
   final String titre;
@@ -7,6 +8,15 @@ class Devoir {
   final int idMatiere;
   final int idProfesseur;
 
+  /// Constructeur de la classe [Devoir].
+  ///
+  /// [id] : L'identifiant du devoir.
+  /// [titre] : Le titre du devoir.
+  /// [description] : La description du devoir.
+  /// [dateEcheance] : La date d'échéance du devoir.
+  /// [priorite] : La priorité du devoir.
+  /// [idMatiere] : L'identifiant de la matière associée au devoir.
+  /// [idProfesseur] : L'identifiant du professeur associé au devoir.
   Devoir({
     this.id,
     required this.titre,
@@ -17,6 +27,7 @@ class Devoir {
     required this.idProfesseur,
   });
 
+  /// Convertit l'objet [Devoir] en un [Map] de clés/valeurs.
   Map<String, Object?> toMap() {
     return {
       'id': id,
@@ -30,4 +41,5 @@ class Devoir {
   }
 }
 
+/// Énumération représentant les différentes priorités d'un devoir.
 enum Priorite { Faible, Moyen, Eleve, Urgent }

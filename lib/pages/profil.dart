@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:note_manager/models/evaluation.dart';
+import 'package:note_manager/models/recompense.dart';
 import 'package:note_manager/pages/settings.dart';
 import 'package:note_manager/services/sqlite_service.dart';
 
+/// Page de profil de l'utilisateur.
 class MyProfilPage extends StatefulWidget {
   const MyProfilPage({Key? key}) : super(key: key);
 
@@ -12,13 +14,16 @@ class MyProfilPage extends StatefulWidget {
 
 class _MyProfilPageState extends State<MyProfilPage> {
   double? average;
+  int? nbRecompenseObtenu;
 
   @override
   void initState() {
     super.initState();
     _calculateAverage();
+    _calculateRewardsObtained();
   }
 
+  /// Calcule la moyenne générale des évaluations.
   _calculateAverage() async {
     SqliteService sqliteService = SqliteService();
     List<Evaluation> evaluations = await sqliteService.getAllEvaluations();
@@ -28,6 +33,17 @@ class _MyProfilPageState extends State<MyProfilPage> {
         average = total / evaluations.length;
       });
     }
+  }
+
+  /// Calcule le nombre de récompenses obtenues.
+  _calculateRewardsObtained() async {
+    SqliteService sqliteService = SqliteService();
+    List<Recompense> rewards = await sqliteService.getAllRecompenses();
+    List<Recompense> obtainedRewards =
+        rewards.where((reward) => reward.isObtained).toList();
+    setState(() {
+      nbRecompenseObtenu = obtainedRewards.length;
+    });
   }
 
   @override
@@ -47,7 +63,7 @@ class _MyProfilPageState extends State<MyProfilPage> {
             ),
             const SizedBox(height: 24),
             const Text(
-              'Louis Pichon',
+              'John Doe',
               style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
@@ -57,13 +73,13 @@ class _MyProfilPageState extends State<MyProfilPage> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Moyenne générale: ${average ?? 'N/A'}',
+              'Moyenne générale: ${average != null ? average : 'N/A'}',
               style: const TextStyle(fontSize: 20),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Récompenses: 1',
-              style: TextStyle(fontSize: 20),
+            Text(
+              'Récompenses: ${nbRecompenseObtenu != null ? nbRecompenseObtenu : 0}',
+              style: const TextStyle(fontSize: 20),
             ),
           ],
         ),

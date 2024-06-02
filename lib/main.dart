@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:note_manager/services/sqlite_service.dart';
 import 'package:note_manager/widgets/tabbar.dart';
 
+/// Point d'entrée de l'application.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
@@ -10,6 +11,7 @@ void main() async {
   await sqliteService.initializeRewards();
 }
 
+/// Classe principale de l'application.
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

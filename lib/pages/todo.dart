@@ -14,6 +14,7 @@ class MyTodoPage extends StatefulWidget {
   _MyTodoPageState createState() => _MyTodoPageState();
 }
 
+/// Page de gestion des tâches à faire.
 class _MyTodoPageState extends State<MyTodoPage> {
   Priorite? _selectedPriority;
   Matiere? _selectedMatiere;
@@ -23,12 +24,14 @@ class _MyTodoPageState extends State<MyTodoPage> {
   List<Matiere> _matieres = [];
   List<Professeur> _professeurs = [];
   List<Devoir> _devoirs = [];
+
+  /// Convertit la liste des devoirs en une liste d'appointments pour le calendrier.
   List<Appointment> _devoirsToAppointments() {
     return _devoirs.map((devoir) {
-      Matiere matiere = _matieres
-          .firstWhere((matiere) => matiere.id == devoir.idMatiere);
-      Professeur professeur = _professeurs.firstWhere(
-          (professeur) => professeur.id == devoir.idProfesseur);
+      Matiere matiere =
+          _matieres.firstWhere((matiere) => matiere.id == devoir.idMatiere);
+      Professeur professeur = _professeurs
+          .firstWhere((professeur) => professeur.id == devoir.idProfesseur);
       return Appointment(
           id: devoir.id,
           startTime: devoir.dateEcheance,
@@ -67,14 +70,17 @@ class _MyTodoPageState extends State<MyTodoPage> {
     _getDevoirs();
   }
 
+  /// Récupère la liste des matières depuis le service SQLite.
   _getMatieres() async {
     _matieres = await SqliteService().getAllMatieres();
   }
 
+  /// Récupère la liste des professeurs depuis le service SQLite.
   _getProfesseurs() async {
     _professeurs = await SqliteService().getAllProfesseurs();
   }
 
+  /// Récupère la liste des devoirs depuis le service SQLite.
   _getDevoirs() async {
     _devoirs = await SqliteService().getAllDevoirs();
     setState(() {});
@@ -114,8 +120,8 @@ class _MyTodoPageState extends State<MyTodoPage> {
               _selectedPriority = devoir.priorite;
               _selectedMatiere =
                   _matieres.firstWhere((m) => m.id == devoir.idMatiere);
-              _selectedProfesseur = _professeurs
-                  .firstWhere((p) => p.id == devoir.idProfesseur);
+              _selectedProfesseur =
+                  _professeurs.firstWhere((p) => p.id == devoir.idProfesseur);
               selectedDateEcheance = appointment.endTime;
               _dateEcheanceController.text =
                   DateFormat('yyyy-MM-dd').format(devoir.dateEcheance);
@@ -514,6 +520,7 @@ class _MyTodoPageState extends State<MyTodoPage> {
   }
 }
 
+/// Data source pour le calendrier.
 class _MyDataSource extends CalendarDataSource {
   _MyDataSource(List<Appointment> source) {
     appointments = source;

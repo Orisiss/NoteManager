@@ -7,7 +7,11 @@ import 'package:note_manager/models/recompense_evaluation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
+/// Service de gestion de la base de données SQLite pour l'application Note Manager.
 class SqliteService {
+  /// Initialise la base de données.
+  ///
+  /// Retourne une instance de la base de données.
   Future<Database> initializeDB() async {
     String path = await getDatabasesPath();
 
@@ -76,11 +80,17 @@ class SqliteService {
     }, version: 1);
   }
 
+  /// Insère un [Devoir] dans la base de données.
+  ///
+  /// Retourne l'ID du [Devoir] inséré.
   Future<int> insertDevoir(Devoir devoir) async {
     Database db = await initializeDB();
     return await db.insert('Devoir', devoir.toMap());
   }
 
+  /// Récupère tous les [Devoir]s de la base de données.
+  ///
+  /// Retourne une liste de [Devoir]s.
   Future<List<Devoir>> getAllDevoirs() async {
     final db = await initializeDB();
     final List<Map<String, Object?>> devoirsMaps = await db.query('Devoir');
@@ -98,23 +108,35 @@ class SqliteService {
     ];
   }
 
+  /// Met à jour un [Devoir] dans la base de données.
+  ///
+  /// Retourne le nombre de [Devoir]s mis à jour.
   Future<int> updateDevoir(Devoir devoir) async {
     Database db = await initializeDB();
     return await db.update('Devoir', devoir.toMap(),
         where: 'id = ?', whereArgs: [devoir.id]);
   }
 
+  /// Supprime un [Devoir] de la base de données.
+  ///
+  /// Retourne le nombre de [Devoir]s supprimés.
   Future<int> deleteDevoir(int id) async {
     Database db = await initializeDB();
     return await db.delete('Devoir', where: 'id =?', whereArgs: [id]);
   }
 
+  /// Insère une [Matiere] dans la base de données.
+  ///
+  /// Retourne l'ID de la [Matiere] insérée.
   Future<int> insertMatiere(Matiere matiere) async {
     Database db = await initializeDB();
     return await db.insert('Matiere', matiere.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
+  /// Récupère toutes les [Matiere]s de la base de données.
+  ///
+  /// Retourne une liste de [Matiere]s.
   Future<List<Matiere>> getAllMatieres() async {
     final db = await initializeDB();
     final List<Map<String, Object?>> matiereMaps = await db.query('Matiere');
@@ -130,26 +152,39 @@ class SqliteService {
     ];
   }
 
+  /// Met à jour une [Matiere] dans la base de données.
+  ///
+  /// Retourne le nombre de [Matiere]s mises à jour.
   Future<int> updateMatiere(Matiere matiere) async {
     Database db = await initializeDB();
     return await db.update('Matiere', matiere.toMap(),
         where: 'id = ?', whereArgs: [matiere.id]);
   }
 
+  /// Supprime une [Matiere] de la base de données.
+  ///
+  /// Retourne le nombre de [Matiere]s supprimées.
   Future<int> deleteMatiere(int id) async {
     Database db = await initializeDB();
     return await db.delete('Matiere', where: 'id =?', whereArgs: [id]);
   }
 
+  /// Insère un [Professeur] dans la base de données.
+  ///
+  /// Retourne l'ID du [Professeur] inséré.
   Future<int> insertProfesseur(Professeur professeur) async {
     Database db = await initializeDB();
     return await db.insert('Professeur', professeur.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
+  /// Récupère tous les [Professeur]s de la base de données.
+  ///
+  /// Retourne une liste de [Professeur]s.
   Future<List<Professeur>> getAllProfesseurs() async {
     final db = await initializeDB();
-    final List<Map<String, Object?>> professeursMaps = await db.query('Professeur');
+    final List<Map<String, Object?>> professeursMaps =
+        await db.query('Professeur');
     return [
       for (final map in professeursMaps)
         Professeur(
@@ -160,17 +195,26 @@ class SqliteService {
     ];
   }
 
+  /// Met à jour un [Professeur] dans la base de données.
+  ///
+  /// Retourne le nombre de [Professeur]s mis à jour.
   Future<int> updateProfesseur(Professeur professeur) async {
     Database db = await initializeDB();
     return await db.update('Professeur', professeur.toMap(),
         where: 'id = ?', whereArgs: [professeur.id]);
   }
 
+  /// Supprime un [Professeur] de la base de données.
+  ///
+  /// Retourne le nombre de [Professeur]s supprimés.
   Future<int> deleteProfesseur(int id) async {
     Database db = await initializeDB();
     return await db.delete('Professeur', where: 'id = ?', whereArgs: [id]);
   }
 
+  /// Insère une [Evaluation] dans la base de données.
+  ///
+  /// Retourne l'ID de l'[Evaluation] insérée.
   Future<int> insertEvaluation(Evaluation evaluation) async {
     Database db = await initializeDB();
     int id = await db.insert('Evaluation', evaluation.toMap());
@@ -194,6 +238,9 @@ class SqliteService {
     return id;
   }
 
+  /// Récupère toutes les [Evaluation]s de la base de données.
+  ///
+  /// Retourne une liste d'[Evaluation]s.
   Future<List<Evaluation>> getAllEvaluations() async {
     final db = await initializeDB();
     final List<Map<String, Object?>> evaluationsMaps =
@@ -211,22 +258,34 @@ class SqliteService {
     ];
   }
 
+  /// Met à jour une [Evaluation] dans la base de données.
+  ///
+  /// Retourne le nombre d'[Evaluation]s mises à jour.
   Future<int> updateEvaluation(Evaluation evaluation) async {
     Database db = await initializeDB();
     return await db.update('Evaluation', evaluation.toMap(),
         where: 'id = ?', whereArgs: [evaluation.id]);
   }
 
+  /// Supprime une [Evaluation] de la base de données.
+  ///
+  /// Retourne le nombre d'[Evaluation]s supprimées.
   Future<int> deleteEvaluation(int id) async {
     Database db = await initializeDB();
     return await db.delete('Evaluation', where: 'id = ?', whereArgs: [id]);
   }
 
+  /// Insère une [Recompense] dans la base de données.
+  ///
+  /// Retourne l'ID de la [Recompense] insérée.
   Future<int> insertRecompense(Recompense recompense) async {
     Database db = await initializeDB();
     return await db.insert('Recompense', recompense.toMap());
   }
 
+  /// Récupère toutes les [Recompense]s de la base de données.
+  ///
+  /// Retourne une liste de [Recompense]s.
   Future<List<Recompense>> getAllRecompenses() async {
     Database db = await initializeDB();
     List<Map<String, Object?>> recompensesMaps = await db.query('Recompense');
@@ -240,17 +299,26 @@ class SqliteService {
     ];
   }
 
+  /// Met à jour une [Recompense] dans la base de données.
+  ///
+  /// Retourne le nombre de [Recompense]s mises à jour.
   Future<int> updateRecompense(Recompense recompense) async {
     Database db = await initializeDB();
     return await db.update('Recompense', recompense.toMap(),
         where: 'id = ?', whereArgs: [recompense.id]);
   }
 
+  /// Supprime une [Recompense] de la base de données.
+  ///
+  /// Retourne le nombre de [Recompense]s supprimées.
   Future<int> deleteRecompense(int id) async {
     Database db = await initializeDB();
     return await db.delete('Recompense', where: 'id = ?', whereArgs: [id]);
   }
 
+  /// Insère une [RecompenseEvaluation] dans la base de données.
+  ///
+  /// Retourne l'ID de la [RecompenseEvaluation] insérée.
   Future<int> insertRecompenseEvaluation(
       RecompenseEvaluation recompenseEvaluation) async {
     Database db = await initializeDB();
@@ -258,6 +326,9 @@ class SqliteService {
         'RecompenseEvaluation', recompenseEvaluation.toMap());
   }
 
+  /// Récupère toutes les [RecompenseEvaluation]s de la base de données.
+  ///
+  /// Retourne une liste de [RecompenseEvaluation]s.
   Future<List<RecompenseEvaluation>> getAllRecompenseEvaluation() async {
     Database db = await initializeDB();
     List<Map<String, Object?>> recompenseEvaluationsMaps =
@@ -273,6 +344,9 @@ class SqliteService {
     ];
   }
 
+  /// Met à jour une [RecompenseEvaluation] dans la base de données.
+  ///
+  /// Retourne le nombre de [RecompenseEvaluation]s mises à jour.
   Future<int> updateRecompenseEvaluation(
       RecompenseEvaluation recompenseEvaluation) async {
     Database db = await initializeDB();
@@ -280,12 +354,21 @@ class SqliteService {
         where: 'id = ?', whereArgs: [recompenseEvaluation.id]);
   }
 
+  /// Supprime une [RecompenseEvaluation] de la base de données.
+  ///
+  /// Retourne le nombre de [RecompenseEvaluation]s supprimées.
   Future<int> deleteRecompenseEvaluation(int id) async {
     Database db = await initializeDB();
     return await db
         .delete('RecompenseEvaluation', where: 'id = ?', whereArgs: [id]);
   }
 
+  /// Initialise les récompenses.
+  ///
+  /// Cette fonction initialise les récompenses en vérifiant d'abord si des récompenses existent déjà.
+  /// Si aucune récompense n'existe, des récompenses par défaut sont créées et insérées dans la base de données.
+  /// Les récompenses par défaut comprennent des objets de type [Recompense] avec des valeurs prédéfinies.
+  /// Chaque récompense est insérée individuellement en utilisant la fonction [insertRecompense].
   Future<void> initializeRewards() async {
     List<Recompense> existingRewards = await getAllRecompenses();
     if (existingRewards.isEmpty) {

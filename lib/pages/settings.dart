@@ -4,6 +4,7 @@ import 'package:note_manager/models/matiere.dart';
 import 'package:note_manager/models/professeur.dart';
 import 'package:note_manager/services/sqlite_service.dart';
 
+/// Page de réglages de l'application.
 class MySettingsPage extends StatefulWidget {
   const MySettingsPage({Key? key}) : super(key: key);
 
@@ -29,11 +30,13 @@ class _MySettingsPageState extends State<MySettingsPage> {
     _getMatieres();
   }
 
+  /// Récupère la liste des professeurs depuis la base de données.
   _getProfesseurs() async {
     _professeurs = await SqliteService().getAllProfesseurs();
     setState(() {});
   }
 
+  /// Récupère la liste des matières depuis la base de données.
   _getMatieres() async {
     _matieres = await SqliteService().getAllMatieres();
     setState(() {});

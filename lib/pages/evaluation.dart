@@ -5,6 +5,7 @@ import 'package:note_manager/models/evaluation.dart';
 import 'package:note_manager/models/matiere.dart';
 import 'package:note_manager/services/sqlite_service.dart';
 
+/// Page de gestion des évaluations.
 class MyEvaluationPage extends StatefulWidget {
   const MyEvaluationPage({Key? key}) : super(key: key);
 
@@ -29,10 +30,12 @@ class _MyEvaluationPageState extends State<MyEvaluationPage> {
     _getEvaluations();
   }
 
+  /// Récupère la liste des matières depuis le service SQLite.
   _getMatieres() async {
     _matieres = await SqliteService().getAllMatieres();
   }
 
+  /// Récupère la liste des évaluations depuis le service SQLite.
   _getEvaluations() async {
     _evaluations = await SqliteService().getAllEvaluations();
     setState(() {});
