@@ -5,9 +5,6 @@
     <h1 align="center">NOTEMANAGER</h1>
 </p>
 <p align="center">
-    <em>HTTP error 429 for prompt `slogan`</em>
-</p>
-<p align="center">
 	<img src="https://img.shields.io/github/license/Orisiss/NoteManager?style=flat&color=0080ff" alt="license">
 	<img src="https://img.shields.io/github/last-commit/Orisiss/NoteManager?style=flat&logo=git&logoColor=white&color=0080ff" alt="last-commit">
 	<img src="https://img.shields.io/github/languages/top/Orisiss/NoteManager?style=flat&color=0080ff" alt="repo-top-language">
@@ -34,8 +31,6 @@
 
 ## 🔗 Quick Links
 
-> - [📍 Overview](#-overview)
-> - [📦 Features](#-features)
 > - [📂 Repository Structure](#-repository-structure)
 > - [🧩 Modules](#-modules)
 > - [🚀 Getting Started](#-getting-started)
@@ -46,18 +41,6 @@
 > - [🤝 Contributing](#-contributing)
 > - [📄 License](#-license)
 > - [👏 Acknowledgments](#-acknowledgments)
-
----
-
-## 📍 Overview
-
-HTTP error 429 for prompt `overview`
-
----
-
-## 📦 Features
-
-HTTP error 429 for prompt `features`
 
 ---
 
